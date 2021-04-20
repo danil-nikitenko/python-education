@@ -1,4 +1,1 @@
-Привет, Мир!
-or
-Salut, le Monde!
-
+Привет, Мир! or Salut, le Monde!
