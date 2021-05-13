@@ -4,8 +4,11 @@ x = object()
 y = object()
 
 # change this code
-x_list = [x for _ in range(0, 10)]
-y_list = [y for _ in range(0, 10)]
+x_list = []
+y_list = []
+for i in range(10):
+    x_list.append(x)
+    y_list.append(y)
 big_list = x_list + y_list
 
 print("x_list contains %d objects" % len(x_list))
