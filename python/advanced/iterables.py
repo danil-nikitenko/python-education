@@ -53,8 +53,8 @@ class Sentence:
 
         Generator for getting words from sentence.
         """
-        for word in self.words:
-            yield word
+        for word in self.text.split():
+            yield ''.join(char for char in word if char not in TOKENS)
 
     @property
     def words(self):
@@ -63,11 +63,7 @@ class Sentence:
 
         Returns a list of words in sentence.
         """
-        words = ''
-        for char in self.text:
-            if char not in TOKENS:
-                words += char
-        return words.split()
+        return [word for word in self._words()]
 
     @property
     def other_chars(self):
@@ -76,17 +72,17 @@ class Sentence:
 
         Returns a list of non-words in sentence.
         """
-        other_characters = ''
+        other_characters = []
         for char in self.text:
             if char in TOKENS:
-                other_characters += char + ' '
-        return other_characters.split()
+                other_characters += char
+        return other_characters
 
 
 print(Sentence('Hello word!'))
 
 print('\n_words() method is a generator:')
-print(Sentence('Hello word!')._words())
+print(Sentence('Hello world!')._words())
 
 print("\nGet item by index (Sentence('Hello world!')[0]):")
 print(Sentence('Hello world!')[0])
