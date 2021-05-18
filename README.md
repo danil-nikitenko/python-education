@@ -1,1 +1,1 @@
-Привет, Мир! or Salut, le Monde!
+Python educational project.
