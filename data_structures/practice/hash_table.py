@@ -1,16 +1,24 @@
+"""
+Hash table realization
+"""
 from linked_list import LinkedListNode, LinkedList
 
 
 class HashTableNode(LinkedListNode):
-
+    """
+    Represents hash table node.
+    Stores node key, value and next node
+    """
     def __init__(self, key, value):
         self.key = key
         self.value = value
         self.next_item = None
 
 
-class HashTableLinkedList(LinkedList):
-
+class HashTableLinkedList:
+    """
+    A linked list variation to work with hash tables
+    """
     def __init__(self, items=None):
         self.head = None
         self.tail = None
@@ -41,18 +49,28 @@ class HashTableLinkedList(LinkedList):
 
     def __str__(self):
         item = self.head
-        list = []
+        lst = []
         while item is not None:
-            list.append((item.key, item.value))
+            lst.append((item.key, item.value))
             item = item.next_item
-        return str(list)
+        return str(lst)
 
     def prepend(self, key, value):
+        """
+        prepend(key, value)
+
+        Adds an item to list head
+        """
         item = HashTableNode(key, value)
         item.next(self.head)
         self.head = item
 
     def append(self, key, value):
+        """
+        append(key, value)
+
+        Adds an item to list tail
+        """
         item = HashTableNode(key, value)
         if self.head is None:
             self.head = item
@@ -61,6 +79,12 @@ class HashTableLinkedList(LinkedList):
         self.tail = item
 
     def lookup(self, key):
+        """
+        lookup(key) -> int
+
+        Returns item index by key.
+        Raises KeyError if key is not in hash table
+        """
         count = 0
         current = self.head
         while current is not None:
@@ -68,9 +92,14 @@ class HashTableLinkedList(LinkedList):
                 return count
             current = current.next_item
             count += 1
-        raise ValueError(f'{item} is not in list')
+        raise KeyError(f'{key} is not in hash table')
 
     def insert(self, index, key, value):
+        """
+        insert(index: int, key, value) -> None
+
+        Inserts an item to list by index
+        """
         item = HashTableNode(key, value)
         current = self.head
         for _ in range(index - 1):
@@ -82,6 +111,12 @@ class HashTableLinkedList(LinkedList):
         current.next(item)
 
     def delete(self, key):
+        """
+        delete(key) -> int
+
+        Deletes an item from list by key and returns its index.
+        Raises KeyError if key is not in list
+        """
         if self.head.key == key:
             self.head = self.head.next_item
             return 0
@@ -97,7 +132,7 @@ class HashTableLinkedList(LinkedList):
             current = current.next_item
             count += 1
         else:
-            raise KeyError(key)
+            raise KeyError(f'{key}: key is not in list')
 
         if current == self.tail:
             self.tail = prev
@@ -105,7 +140,10 @@ class HashTableLinkedList(LinkedList):
 
 
 class HashTable:
-
+    """
+    Represents a hash table.
+    Stores list of hash table items
+    """
     def __init__(self, size, items=None):
         self.list = LinkedList()
         self.list.expand(size)
@@ -114,21 +152,31 @@ class HashTable:
                 self.insert(key, items[key])
 
     def hash_function(self, key):
+        """
+        hash_function(key) -> int
 
+        Returns a hash value of a key.
+        Raises TypeError if key type is wrong
+        """
         if isinstance(key, int):
             return key % len(self.list)
 
         if isinstance(key, str):
-            sum = 0
+            result = 0
             for char in key:
-                sum += ord(char)
-            return sum % len(self.list)
+                result += ord(char)
+            return result % len(self.list)
 
-        raise ValueError(f'Wrong type {key}: {type(key)}')
+        raise TypeError(f'Wrong type {key}: {type(key)}')
 
     def insert(self, key, value):
+        """
+        insert(key, value) -> None
+
+        Inserts an item in hash table
+        """
         index = self.hash_function(key)
-        if type(self.list[index]) == HashTableLinkedList:
+        if isinstance(self.list[index], HashTableLinkedList):
             if key in self.list[index]:
                 self.list[index][key] = value
             else:
@@ -140,29 +188,54 @@ class HashTable:
         self.list.insert(index, item)
 
     def lookup(self, key):
+        """
+        lookup(key)
+
+        Returns a value by key.
+        Raises KeyError if key is not in hash table
+        """
         index = self.hash_function(key)
         if key not in self.list[index]:
-            raise KeyError(key)
+            raise KeyError(f'{key}: key is not in hash table')
         return self.list[index][key]
 
     def delete(self, key):
+        """
+        delete(key)
+
+        Deletes an item from hash table by key.
+        Raises KeyError if key is not in hash table
+        """
         index = self.hash_function(key)
         if key not in self.list[index]:
-            raise KeyError(key)
+            raise KeyError(f'{key}: key is not in hash table')
         self.list[index].delete(key)
 
 
 def main():
-    hash_table = HashTable(3)
-    hash_table.insert(1, 1)
-    hash_table.insert(2, 2)
-    hash_table.insert(3, 15)
-    #hash_table.insert(4, 4)
-    #print(len(hash_table.list))
-    print(hash_table.lookup(3))
-    #print(3%3)
-    #hash_table.delete(2)
-    #print(hash_table.lookup(1))
+    """
+    main()
+
+    Main function to demonstrate program functionality
+    """
+    hash_table = HashTable(10)
+    hash_table.insert(1, 12)
+    hash_table.insert(2, 31)
+    hash_table.insert(3, 14)
+    hash_table.insert('lies', 1)
+    hash_table.insert('foes', 2)
+    print('lookup():\n')
+    print('1: ', hash_table.lookup(1))
+    print('2: ', hash_table.lookup(2))
+    print('3: ', hash_table.lookup(3))
+    print('\'lies\': ', hash_table.lookup('lies'))
+    print('\'foes\': ', hash_table.lookup('foes'))
+    print('\ndelete(2): \n')
+    hash_table.delete(2)
+    try:
+        print(hash_table.lookup(2))
+    except KeyError as ex:
+        print(ex)
 
 
 if __name__ == "__main__":

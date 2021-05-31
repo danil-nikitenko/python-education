@@ -1,18 +1,31 @@
-from itertools import count
+"""
+Linked list realization
+"""
 
 
 class LinkedListNode:
-
+    """
+    Represents a linked list node.
+    Stores node data and reference to next list node
+    """
     def __init__(self, data):
         self.data = data
         self.next_item = None
 
     def next(self, next_item):
+        """
+        next(next_item: LinkedListNode)
+
+        Sets a reference to next node
+        """
         self.next_item = next_item
 
 
 class LinkedList:
-
+    """
+    Represents linked list.
+    Stores list head, tail, size
+    """
     def __init__(self, *items):
         self.head = None
         self.tail = None
@@ -23,7 +36,7 @@ class LinkedList:
     def __contains__(self, item):
         current = self.head
         while current is not None:
-            if type(current) != type(item):
+            if not isinstance(current, item):
                 if current.data == item:
                     return True
             if current == item:
@@ -43,22 +56,32 @@ class LinkedList:
 
     def __str__(self):
         item = self.head
-        list = []
+        lst = []
         while item is not None:
-            list.append(item.data)
+            lst.append(item.data)
             item = item.next_item
-        return str(list)
+        return str(lst)
 
     def __len__(self):
         return self.size
 
     def prepend(self, item):
+        """
+        prepend(item)
+
+        Adds an item at the beginning of the list
+        """
         item = LinkedListNode(item)
         item.next(self.head)
         self.head = item
         self.size += 1
 
     def append(self, item):
+        """
+        append(item)
+
+        Adds an item at the end of the list
+        """
         item = LinkedListNode(item)
         if self.head is None:
             self.head = item
@@ -68,6 +91,12 @@ class LinkedList:
         self.size += 1
 
     def lookup(self, item):
+        """
+        lookup(item) -> int
+
+        Returns the node index by value.
+        Raises ValueError if there is no node with this value in the list
+        """
         count = 0
         current = self.head
         while current is not None:
@@ -78,6 +107,11 @@ class LinkedList:
         raise ValueError(f'{item} is not in list')
 
     def insert(self, index, item):
+        """
+        insert(index: int, item) -> None
+
+        Inserts an item to the list by index
+        """
         item = LinkedListNode(item)
         if index == 0:
             item.next(self.head)
@@ -96,6 +130,12 @@ class LinkedList:
         current.next(item)
 
     def delete(self, index):
+        """
+        delete(index: int) -> None
+
+        Deletes an item from the list by index.
+        Raises IndexError if index is out of range
+        """
         if index == 0:
             self.head = self.head.next_item
             self.size -= 1
@@ -115,39 +155,41 @@ class LinkedList:
         current.next_item = current.next_item.next_item
 
     def expand(self, size):
+        """
+        expand(size: int)
+
+        Expands a list by given value.
+        Used to implement the hash table
+        """
         if isinstance(size, int):
             for _ in range(size):
                 self.append(0)
 
 
 def main():
+    """
+    main()
 
-    a = LinkedList(0, 1, 2)
-    a.prepend(10)
-    a.delete(0)
-    a.insert(0, 10)
-    #a.append(0)
-    # a.append(1)
-    # a.append(6)
-    #a.delete(5)
-    print(a)
-    print(len(a))
-    lst = [0, 1, 3, 4]
-    lst.insert(10, 2)
-    #lst.remove(5)
-    #lst.pop(5)
-    #print(lst)
-
+    Main function to demonstrate program functionality
+    """
+    lst = LinkedList(0, 1, 2)
+    print('list:')
+    print(lst)
+    print('\nprepend(10):')
+    lst.prepend(10)
+    print(lst)
+    print('\nappend(3):')
+    lst.append(3)
+    print(lst)
+    print('\nlookup(2):')
+    print(lst.lookup(2))
+    print('\ninsert(2, 5):')
+    lst.insert(2, 5)
+    print(lst)
+    print('\ndelete(1):')
+    lst.delete(1)
+    print(lst)
 
 
 if __name__ == "__main__":
     main()
-
-# if index == 0:
-#     return self.head.data
-# current = self.head
-# for _ in range(index):
-#     if current.next_item is None:
-#         raise ValueError(f'{index}: index out of range')
-#     current = current.next_item
-# return current.data
