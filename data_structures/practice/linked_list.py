@@ -36,7 +36,7 @@ class LinkedList:
     def __contains__(self, item):
         current = self.head
         while current is not None:
-            if not isinstance(current, item):
+            if not isinstance(current, type(item)):
                 if current.data == item:
                     return True
             if current == item:
