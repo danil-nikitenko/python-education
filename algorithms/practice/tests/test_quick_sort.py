@@ -1,6 +1,6 @@
 import pytest
 import sys
-sys.path.append('/home/geleoz/snap/python-education/algorithms/practice')
+sys.path.append('../')
 from iterative_quick_sort import iterative_quick_sort
 
 

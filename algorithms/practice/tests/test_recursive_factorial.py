@@ -1,6 +1,6 @@
 import pytest
 import sys
-sys.path.append('/home/geleoz/snap/python-education/algorithms/practice')
+sys.path.append('../')
 from recursive_factorial import factorial
 
 

@@ -1,6 +1,6 @@
 import pytest
 import sys
-sys.path.append('/home/geleoz/snap/python-education/algorithms/practice')
+sys.path.append('../')
 from binary_search import binary_search
 
 
