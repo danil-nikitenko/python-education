@@ -16,6 +16,9 @@ class Queue:
     def __len__(self):
         return len(self.queue)
 
+    def qsize(self):
+        return len(self.queue)
+
     def enqueue(self, item):
         """
         enqueue(item)

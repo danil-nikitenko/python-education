@@ -1,7 +1,6 @@
 """
 Graph realization
 """
-from queue import Queue
 from linked_list import LinkedList
 
 
@@ -41,9 +40,10 @@ class GraphNode:
 
         Deletes node from self.connections if it`s there
         """
-        for i in range(len(self.connections) - 1):
+        for i in range(len(self.connections)):
             if self.connections[i] == connection:
                 self.connections.delete(i)
+                return
 
     def delete_connections(self):
         """
@@ -101,16 +101,16 @@ class Graph:
         Searches a node by value.
         Raises ValueError if node with given value is not in graph
         """
-        queue = Queue(self.nodes[0])
+        queue = [self.nodes[0]]
         checked = LinkedList()
         while len(queue) > 0:
-            item = queue.dequeue()
+            item = queue.pop(0)
             if item.data == value:
                 return item
             checked.append(item)
             for i in range(len(item.connections)):
                 if item.connections[i] not in checked:
-                    queue.enqueue(item.connections[i])
+                    queue.append(item.connections[i])
         raise ValueError('Node is not in graph')
 
     def delete(self, value):
@@ -162,6 +162,7 @@ def main():
     print(grp)
     print('\nlookup(5)\n')
     print(f'{grp.lookup(5)}: {grp.lookup(5).data}')
+    print(grp)
     grp.delete(0)
     print('\ndelete(0)\n')
     print(grp)

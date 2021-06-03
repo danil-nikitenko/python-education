@@ -147,6 +147,9 @@ class HashTable:
     def __init__(self, size, items=None):
         self.list = LinkedList()
         self.list.expand(size)
+        for i in range(len(self.list)):
+            self.list.delete(i)
+            self.list.insert(i, HashTableLinkedList())
         if items:
             for key in items:
                 self.insert(key, items[key])
