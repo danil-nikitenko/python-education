@@ -1,7 +1,7 @@
 """
 Binary search
 """
-from iterative_quick_sort import iterative_quick_sort
+from .iterative_quick_sort import iterative_quick_sort
 
 
 def binary_search(lst, element):

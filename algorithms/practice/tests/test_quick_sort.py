@@ -1,7 +1,5 @@
 import pytest
-import sys
-sys.path.append('../')
-from iterative_quick_sort import iterative_quick_sort
+from ..iterative_quick_sort import iterative_quick_sort
 
 
 def test_iterative_quick_sort_int():

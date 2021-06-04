@@ -1,7 +1,5 @@
 import pytest
-import sys
-sys.path.append('../')
-from recursive_factorial import factorial
+from ..recursive_factorial import factorial
 
 
 @pytest.mark.parametrize('test_arg, expected', [

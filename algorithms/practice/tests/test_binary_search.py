@@ -1,7 +1,5 @@
 import pytest
-import sys
-sys.path.append('../')
-from binary_search import binary_search
+from ..binary_search import binary_search
 
 
 @pytest.mark.parametrize('test_args, expected', [
