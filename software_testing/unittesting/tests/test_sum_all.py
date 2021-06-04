@@ -1,6 +1,6 @@
 import pytest
 import sys
-sys.path.append('/home/geleoz/snap/python-education/software_testing/unittesting')
+sys.path.append('../')
 from to_test import sum_all
 
 
