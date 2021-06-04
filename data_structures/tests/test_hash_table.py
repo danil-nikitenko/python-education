@@ -1,7 +1,5 @@
 import pytest
-import sys
-sys.path.append('../')
-from practice.hash_table import HashTable
+from ..practice.hash_table import HashTable
 
 
 @pytest.fixture

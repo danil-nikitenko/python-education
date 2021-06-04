@@ -1,7 +1,5 @@
 import pytest
-import sys
-sys.path.append('../')
-from practice.stack import Stack
+from ..practice.stack import Stack
 
 
 @pytest.fixture

@@ -1,7 +1,5 @@
 import pytest
-import sys
-sys.path.append('../')
-from practice.linked_list import LinkedList
+from ..practice.linked_list import LinkedList
 
 
 @pytest.fixture

@@ -1,7 +1,5 @@
 import pytest
-import sys
-sys.path.append('../')
-from practice.binary_search_tree import BinarySearchTree
+from ..practice.binary_search_tree import BinarySearchTree
 
 
 @pytest.fixture

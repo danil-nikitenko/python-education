@@ -1,7 +1,5 @@
 import pytest
-import sys
-sys.path.append('../')
-from practice.queue import Queue
+from ..practice.queue import Queue
 
 
 @pytest.fixture
