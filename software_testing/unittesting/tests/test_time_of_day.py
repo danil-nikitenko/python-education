@@ -1,7 +1,7 @@
 import datetime
 from unittest import mock
-import sys
-sys.path.append('../')
+import to_test
+#from .. import to_test
 from to_test import time_of_day
 
 

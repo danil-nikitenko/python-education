@@ -1,6 +1,4 @@
 import pytest
-import sys
-sys.path.append('../')
 from to_test import Product
 
 
