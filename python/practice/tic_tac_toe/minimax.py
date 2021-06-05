@@ -112,6 +112,7 @@ class Game:
                 return 0
             elif choice == '3':
                 self.print_log()
+                print(MENU)
             elif choice == '4':
                 self.clear_log()
             elif choice == '5':
@@ -210,6 +211,7 @@ class Game:
 
         for _ in range(9):
             if self.current_player == 1:
+                print('\nComputer turn:')
                 self.board.change_marker((self.minimax(self.board, self.current_player)[0],),
                                          self.markers[self.current_player])
             else:
@@ -293,7 +295,7 @@ class Game:
             pass
 
     @staticmethod
-    def print_log():
+    def print_log(self):
         """
         print_log()
 
@@ -303,6 +305,10 @@ class Game:
         with open('victories.log') as file:
             for line in file:
                 print(line.strip())
+        while True:
+            choice = input('\nPrint \'b\' to exit: ')
+            if choice in ('B', 'b'):
+                break
 
 
 def main():
@@ -314,9 +320,6 @@ def main():
     board = Board()
     game = Game(board)
     game.print_menu()
-    # s = input()
-    # print(tuple(int(x.strip()) for x in s.split(',')))
-    # print(len(tuple(int(x.strip()) for x in s.split(','))))
 
 
 if __name__ == "__main__":
