@@ -19,6 +19,7 @@ class Model:
         self.turn_count = 0
         self.buttons_frame = None
         self.status_label = None
+        logging.info('=====%s vs %s=====', self.players[1], self.players[2])
 
     def change_marker(self, button):
         if self.current_player == 1:
@@ -35,7 +36,19 @@ class Model:
         """
         self.current_player = 1 if self.current_player == 2 else 2
         self.current_marker = 1 if self.current_marker == 2 else 2
-        self.status_label.config(text=f'{self.players[self.current_player]} turn.')
+        self.status_label.config(text=f'{self.players[self.current_player]}, your turn')
+
+    def reset_game(self):
+        """
+        reset_game()
+
+        Resets all necessary parameters.
+        """
+        self.turn_count = 0
+        for button in self.buttons_frame.winfo_children():
+            button.config(text='', bg='gainsboro')
+            button['state'] = 'normal'
+        self.game_start()
 
     def game_start(self):
         """
@@ -44,10 +57,9 @@ class Model:
         Controls the single player game (computer vs player).
         """
         self.current_player = random.randrange(1, 3)
-        self.status_label.config(text=f'{self.players[self.current_player]} turn.')
+        self.status_label.config(text=f'{self.players[self.current_player]}, your turn')
         if self.game_type == 1 and self.current_player == 1:
             button_number = self.minimax(self.get_board(), self.current_player)[0]
-            print(button_number)
             self.button_clicked(self.buttons_frame.winfo_children()[button_number])
         return
 
@@ -64,7 +76,7 @@ class Model:
             if buttons[i]['text'] == buttons[i + 1]['text'] == buttons[i + 2]['text'] ==\
                     self.markers[self.current_player]:
                 buttons[i].config(bg='red4')
-                buttons[i + 1].config(bg='re4')
+                buttons[i + 1].config(bg='red4')
                 buttons[i + 2].config(bg='red4')
                 return self.current_player
             if buttons[j]['text'] == buttons[j + 3]['text'] == buttons[j + 6]['text'] == \
@@ -93,16 +105,17 @@ class Model:
         self.turn_count += 1
         self.change_marker(button)
         if self.winner() == self.current_player:
-            # for btn in self.buttons_frame.winfo_children():
-            #     btn['state'] = 'disable'
             self.disable_buttons()
-            self.status_label.config(text=f'Congratulations {self.players[self.current_player]}, you won!')
+            if self.game_type == 1:
+                self.status_label.config(text=f'You lose')
+            else:
+                self.status_label.config(text=f'Congratulations {self.players[self.current_player]}, you won!')
             self.score[self.current_player] += 1
             logging.info('%s wins.', self.players[self.current_player])
             logging.info('Score: %s/%s.', self.score[1], self.score[2])
             return 1
         elif self.turn_count == 9:
-            self.status_label.config(text='That is a tie.')
+            self.status_label.config(text='That is a tie')
             logging.info('A tie.')
             return
         self.swap_turn()
@@ -128,7 +141,6 @@ class Model:
 
         results = {}
         buffer = tuple(new_board)
-        #print(buffer)
         for i in f_spots:
             new_board[i] = self.markers[new_player]
             result = self.minimax(new_board, 1 if new_player == 2 else 2)

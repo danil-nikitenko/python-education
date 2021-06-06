@@ -24,6 +24,75 @@ class MainMenu:
         self.button_exit.grid(column=0, row=5, padx=26, pady=8)
 
 
+class SingleplayerLoginScreen:
+
+    def __init__(self, master):
+        self.root = master
+        self.root.geometry('300x120+800+300')
+        self.root.resizable(False, False)
+        self.root.title('Tic tac toe')
+
+        self.message_label = tk.Label(self.root, text='Enter your name', font='Arial, 14')
+        self.name_entry = tk.Entry(self.root, width=30)
+        self.ok_button = tk.Button(self.root, text='OK', width=10)
+        self.back_button = tk.Button(self.root, text='Back', width=10)
+
+        self.name_entry.bind("<FocusIn>", lambda args: self.name_entry.delete('0', 'end'))
+
+        self.message_label.place(relx=.5, rely=.1, anchor='c')
+        self.name_entry.insert(0, 'Player')
+        self.name_entry.place(relx=.5, rely=.35, anchor='c')
+        #self.ok_button.place(relx=.5, rely=.7, anchor='c')
+        self.ok_button.place(relx=.55, rely=.6)
+        self.back_button.place(relx=.09, rely=.6)
+
+
+class MultiplayerLoginScreen:
+
+    def __init__(self, master):
+        self.root = master
+        self.root.geometry('300x150+800+300')
+        self.root.resizable(False, False)
+        self.root.title('Tic tac toe')
+
+        self.message_label = tk.Label(self.root, text='Enter your names', font='Arial, 14')
+        self.name_player1_entry = tk.Entry(self.root, width=30)
+        self.name_player2_entry = tk.Entry(self.root, width=30)
+        self.ok_button = tk.Button(self.root, text='OK', width=10)
+        self.back_button = tk.Button(self.root, text='Back', width=10)
+
+        self.name_player1_entry.bind("<FocusIn>", lambda args: self.name_player1_entry.delete('0', 'end'))
+        self.name_player2_entry.bind("<FocusIn>", lambda args: self.name_player2_entry.delete('0', 'end'))
+
+        self.message_label.place(relx=.5, rely=.1, anchor='c')
+        self.name_player1_entry.insert(0, 'Player 1')
+        self.name_player1_entry.place(relx=.5, rely=.3, anchor='c')
+        self.name_player2_entry.insert(0, 'Player 2')
+        self.name_player2_entry.place(relx=.5, rely=.5, anchor='c')
+        self.ok_button.place(relx=.55, rely=.7)
+        self.back_button.place(relx=.09, rely=.7)
+
+
+class LogWindow:
+
+    def __init__(self, master):
+        self.root = master
+        self.root.geometry('500x450+700+200')
+        self.root.resizable(False, False)
+        self.root.title('Log file')
+
+        self.scrollbar = tk.Scrollbar(self.root)
+        self.scrollbar.pack(side='right', fill='y')
+        self.text_box = tk.Text(self.root, width=40, height=15, font='Arial, 14')
+        self.back_button = tk.Button(self.root, text='Back', width=10)
+
+        self.text_box.config(yscrollcommand=self.scrollbar.set)
+        self.scrollbar.config(command=self.text_box.yview)
+
+        self.text_box.pack(pady=20)
+        self.back_button.pack()
+
+
 class GameBoard:
 
     def __init__(self, master):
@@ -34,8 +103,8 @@ class GameBoard:
 
         menubar = tk.Menu(self.root)
         self.control_menu = tk.Menu(self.root, tearoff=0)
-        self.control_menu.add_command(label="Restart", font='Arial, 14')
-        self.control_menu.add_command(label="Exit", font='Arial, 14')
+        # self.control_menu.add_command(label="Restart", font='Arial, 14')
+        # self.control_menu.add_command(label="Exit", font='Arial, 14')
         menubar.add_cascade(label="Options", font='Arial, 14', menu=self.control_menu)
 
         self.status_frame = tk.Frame(self.root, bd=1, relief='raised')
@@ -68,5 +137,5 @@ class GameBoard:
 
 
 # root = tk.Tk()
-# app = GameBoard(root)
+# app = Log(root)
 # root.mainloop()
