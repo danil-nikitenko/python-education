@@ -25,6 +25,7 @@ class Board:
     """
     Class for board representation.
     """
+
     def __init__(self):
         self.board = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
@@ -85,6 +86,7 @@ class Game:
 
     Handles game events.
     """
+
     def __init__(self, board):
         self.board = board
         self.markers = {1: f'{RED}X{ENDC}', 2: f'{BLUE}O{ENDC}'}
