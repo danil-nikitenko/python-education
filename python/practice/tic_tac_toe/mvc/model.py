@@ -1,19 +1,21 @@
+"""
+Model
+"""
 import random
 import logging
-import tkinter as tk
-from view import MainMenu, GameBoard
 
 logging.basicConfig(filename='victories.log', level=logging.INFO,
                     format='%(asctime)s - %(message)s')
 
 
 class Model:
-
+    """
+    Responsible for the game logic
+    """
     def __init__(self, game_type, player1, player2):
         self.game_type = game_type
         self.players = {1: player1, 2: player2}
         self.markers = {1: 'X', 2: 'O'}
-        self.current_marker = 1
         self.current_player = 1
         self.score = {1: 0, 2: 0}
         self.turn_count = 0
@@ -22,10 +24,15 @@ class Model:
         logging.info('=====%s vs %s=====', self.players[1], self.players[2])
 
     def change_marker(self, button):
+        """
+        change_marker(button: tkinter.Button)
+
+        Changes the board slot with the marker.
+        """
         if self.current_player == 1:
-            button.config(text='X', disabledforeground='green')
+            button.config(text='X', disabledforeground='sea green')
         else:
-            button.config(text='O', disabledforeground='blue')
+            button.config(text='O', disabledforeground='purple4')
         button['state'] = 'disable'
 
     def swap_turn(self):
@@ -35,14 +42,13 @@ class Model:
         Passes the turn to another player.
         """
         self.current_player = 1 if self.current_player == 2 else 2
-        self.current_marker = 1 if self.current_marker == 2 else 2
         self.status_label.config(text=f'{self.players[self.current_player]}, your turn')
 
     def reset_game(self):
         """
         reset_game()
 
-        Resets all necessary parameters.
+        Resets all necessary parameters before starting a new game.
         """
         self.turn_count = 0
         for button in self.buttons_frame.winfo_children():
@@ -52,16 +58,15 @@ class Model:
 
     def game_start(self):
         """
-        game_minimax()
+        game_start() -> None
 
-        Controls the single player game (computer vs player).
+        Responsible for starting the game.
         """
         self.current_player = random.randrange(1, 3)
         self.status_label.config(text=f'{self.players[self.current_player]}, your turn')
         if self.game_type == 1 and self.current_player == 1:
             button_number = self.minimax(self.get_board(), self.current_player)[0]
             self.button_clicked(self.buttons_frame.winfo_children()[button_number])
-        return
 
     def winner(self):
         """
@@ -75,59 +80,66 @@ class Model:
         for _ in range(3):
             if buttons[i]['text'] == buttons[i + 1]['text'] == buttons[i + 2]['text'] ==\
                     self.markers[self.current_player]:
-                buttons[i].config(bg='red4')
-                buttons[i + 1].config(bg='red4')
-                buttons[i + 2].config(bg='red4')
+                buttons[i].config(bg='khaki')
+                buttons[i + 1].config(bg='khaki')
+                buttons[i + 2].config(bg='khaki')
                 return self.current_player
             if buttons[j]['text'] == buttons[j + 3]['text'] == buttons[j + 6]['text'] == \
                     self.markers[self.current_player]:
-                buttons[j].config(bg='red4')
-                buttons[j + 3].config(bg='red4')
-                buttons[j + 6].config(bg='red4')
+                buttons[j].config(bg='khaki')
+                buttons[j + 3].config(bg='khaki')
+                buttons[j + 6].config(bg='khaki')
                 return self.current_player
             i += 3
             j += 1
         if buttons[0]['text'] == buttons[4]['text'] == buttons[8]['text'] == \
                 self.markers[self.current_player]:
-            buttons[0].config(bg='red4')
-            buttons[4].config(bg='red4')
-            buttons[8].config(bg='red4')
+            buttons[0].config(bg='khaki')
+            buttons[4].config(bg='khaki')
+            buttons[8].config(bg='khaki')
             return self.current_player
         if buttons[2]['text'] == buttons[4]['text'] == buttons[6]['text'] == \
                 self.markers[self.current_player]:
-            buttons[2].config(bg='red4')
-            buttons[4].config(bg='red4')
-            buttons[6].config(bg='red4')
+            buttons[2].config(bg='khaki')
+            buttons[4].config(bg='khaki')
+            buttons[6].config(bg='khaki')
             return self.current_player
         return 0
 
     def button_clicked(self, button):
+        """
+        button_clicked(button: tkinter.Button) -> int
+
+        Handles the button click event on the game board
+        """
         self.turn_count += 1
         self.change_marker(button)
         if self.winner() == self.current_player:
             self.disable_buttons()
             if self.game_type == 1:
-                self.status_label.config(text=f'You lose')
+                self.status_label.config(text='You lose')
             else:
-                self.status_label.config(text=f'Congratulations {self.players[self.current_player]}, you won!')
+                self.status_label.config(text=f'Congratulations '
+                                              f'{self.players[self.current_player]}, you won!')
             self.score[self.current_player] += 1
             logging.info('%s wins.', self.players[self.current_player])
             logging.info('Score: %s/%s.', self.score[1], self.score[2])
-            return 1
+            return 0
         elif self.turn_count == 9:
             self.status_label.config(text='That is a tie')
             logging.info('A tie.')
-            return
+            return 1
         self.swap_turn()
         if self.game_type == 1 and self.current_player == 1:
             self.disable_buttons()
             button_number = self.minimax(self.get_board(), self.current_player)[0]
-            if self.button_clicked(self.buttons_frame.winfo_children()[button_number]) != 1:
+            if self.button_clicked(self.buttons_frame.winfo_children()[button_number]) != 0:
                 self.enable_buttons()
+        return 2
 
     def minimax(self, new_board, new_player):
         """
-        minimax(new_board: Board, new_player: int) -> tuple
+        minimax(new_board: list, new_player: int) -> tuple
 
         Recursive function to control computer moves.
         """
@@ -152,51 +164,54 @@ class Model:
         return min(results, key=results.get), min(list(results.values()))
 
     def get_board(self):
+        """
+        get_board() -> list
+
+        Returns the game board state as a list with nine items.
+        """
         board = []
         for button in self.buttons_frame.winfo_children():
             board.append(button['text'])
         return board
 
     def disable_buttons(self):
+        """
+        disable_buttons()
+
+        Disables all not pressed buttons on the game board
+        """
         for i in self.free_spots(self.get_board()):
             self.buttons_frame.winfo_children()[i]['state'] = 'disable'
 
     def enable_buttons(self):
+        """
+        enable_buttons()
+
+        Enables all not pressed buttons on the game board
+        """
         for i in self.free_spots(self.get_board()):
             self.buttons_frame.winfo_children()[i]['state'] = 'normal'
 
     @staticmethod
     def minimax_winner(brd):
         """
-        minimax_winner(brd: Board) -> int
+        minimax_winner(brd: list) -> int
 
         Returns winner id if the game is end or 0 otherwise.
         Used only by minimax method.
         """
         i = j = 0
         for _ in range(3):
-            if brd[i] == brd[i + 1] == brd[i + 2]:
-                if brd[i] == 'X':
-                    return 1
-                elif brd[i] == 'O':
-                    return 2
-            if brd[j] == brd[j + 3] == brd[j + 6]:
-                if brd[j] == 'X':
-                    return 1
-                elif brd[j] == 'O':
-                    return 2
+            if brd[i] == brd[i + 1] == brd[i + 2] and brd[i]:
+                return 1 if brd[i] == 'X' else 2
+            if brd[j] == brd[j + 3] == brd[j + 6] and brd[j]:
+                return 1 if brd[j] == 'X' else 2
             i += 3
             j += 1
-        if brd[0] == brd[4] == brd[8]:
-            if brd[0] == 'X':
-                return 1
-            elif brd[0] == 'O':
-                return 2
-        if brd[2] == brd[4] == brd[6]:
-            if brd[2] == 'X':
-                return 1
-            elif brd[2] == 'O':
-                return 2
+        if brd[0] == brd[4] == brd[8] and brd[0]:
+            return 1 if brd[0] == 'X' else 2
+        if brd[2] == brd[4] == brd[6] and brd[2]:
+            return 1 if brd[2] == 'X' else 2
         return 0
 
     @staticmethod

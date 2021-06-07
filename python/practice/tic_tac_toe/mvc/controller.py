@@ -1,3 +1,6 @@
+"""
+Controller
+"""
 import tkinter as tk
 import tkinter.messagebox
 from model import Model
@@ -5,7 +8,9 @@ from view import MainMenu, SingleplayerLoginScreen, MultiplayerLoginScreen, LogW
 
 
 class Controller:
-
+    """
+    Controls model and view parts
+    """
     def __init__(self, master):
         self.model = None
         self.view = MainMenu(master)
@@ -16,6 +21,11 @@ class Controller:
         self.view.button_exit.config(command=self.button_exit_clicked)
 
     def button_singleplayer_clicked(self):
+        """
+        button_singleplayer_clicked()
+
+        Handles the singleplayer button click in the main menu
+        """
         self.view.root.destroy()
         master = tk.Tk()
         self.view = SingleplayerLoginScreen(master)
@@ -26,6 +36,11 @@ class Controller:
         self.view.back_button.config(command=self.button_back_clicked)
 
     def button_multiplayer_clicked(self):
+        """
+        button_multiplayer_clicked()
+
+        Handles the multiplayer button click in the main menu
+        """
         self.view.root.destroy()
         master = tk.Tk()
         self.view = MultiplayerLoginScreen(master)
@@ -36,6 +51,11 @@ class Controller:
         self.view.back_button.config(command=self.button_back_clicked)
 
     def button_view_log_clicked(self):
+        """
+        button_view_log_clicked()
+
+        Handles the view log button click in the main menu
+        """
         self.view.root.destroy()
         master = tk.Tk()
         self.view = LogWindow(master)
@@ -45,14 +65,29 @@ class Controller:
 
     @staticmethod
     def button_clear_log_clicked():
+        """
+        button_clear_log_clicked()
+
+        Handles the clear log button click in the main menu
+        """
         with open('victories.log', 'w'):
             pass
-        tk.messagebox.showinfo("Clear log", 'Log cleared')
+        tkinter.messagebox.showinfo("Clear log", 'Log cleared')
 
     def button_exit_clicked(self):
+        """
+        button_exit_clicked()
+
+        Handles the exit button click in the main menu
+        """
         self.view.root.destroy()
 
     def button_ok_clicked(self, mode, player1, player2):
+        """
+        button_exit_clicked(mode: int, player1: str, player2: str)
+
+        Handles the ok button click on the login screen
+        """
         self.view.root.destroy()
         master = tk.Tk()
         self.view = GameBoard(master)
@@ -70,14 +105,29 @@ class Controller:
         self.model.game_start()
 
     def button_back_clicked(self):
+        """
+        button_back_clicked()
+
+        Handles the back button click on the login screen
+        """
         self.view.root.destroy()
         master = tk.Tk()
         self.__init__(master)
 
     def restart(self):
+        """
+        restart()
+
+        Handles the restart menu option on the game board
+        """
         self.model.reset_game()
 
     def exit(self):
+        """
+        exit()
+
+        Handles the exit menu option on the game board
+        """
         self.view.root.destroy()
         master = tk.Tk()
         self.__init__(master)
@@ -85,6 +135,5 @@ class Controller:
 
 if __name__ == '__main__':
     root = tk.Tk()
-    # root.withdraw()
     app = Controller(root)
     root.mainloop()

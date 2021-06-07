@@ -1,8 +1,13 @@
+"""
+View
+"""
 import tkinter as tk
 
 
 class MainMenu:
-
+    """
+    Represents main menu of the game
+    """
     def __init__(self, master):
         self.root = master
         self.root.geometry('200x400+860+250')
@@ -25,7 +30,9 @@ class MainMenu:
 
 
 class SingleplayerLoginScreen:
-
+    """
+    Represents login screen while playing against the computer
+    """
     def __init__(self, master):
         self.root = master
         self.root.geometry('300x120+800+300')
@@ -42,13 +49,14 @@ class SingleplayerLoginScreen:
         self.message_label.place(relx=.5, rely=.1, anchor='c')
         self.name_entry.insert(0, 'Player')
         self.name_entry.place(relx=.5, rely=.35, anchor='c')
-        #self.ok_button.place(relx=.5, rely=.7, anchor='c')
         self.ok_button.place(relx=.55, rely=.6)
         self.back_button.place(relx=.09, rely=.6)
 
 
 class MultiplayerLoginScreen:
-
+    """
+    Represents login screen during player versus player
+    """
     def __init__(self, master):
         self.root = master
         self.root.geometry('300x150+800+300')
@@ -61,8 +69,10 @@ class MultiplayerLoginScreen:
         self.ok_button = tk.Button(self.root, text='OK', width=10)
         self.back_button = tk.Button(self.root, text='Back', width=10)
 
-        self.name_player1_entry.bind("<FocusIn>", lambda args: self.name_player1_entry.delete('0', 'end'))
-        self.name_player2_entry.bind("<FocusIn>", lambda args: self.name_player2_entry.delete('0', 'end'))
+        self.name_player1_entry.bind("<FocusIn>", lambda args:
+                                     self.name_player1_entry.delete('0', 'end'))
+        self.name_player2_entry.bind("<FocusIn>", lambda args:
+                                     self.name_player2_entry.delete('0', 'end'))
 
         self.message_label.place(relx=.5, rely=.1, anchor='c')
         self.name_player1_entry.insert(0, 'Player 1')
@@ -74,16 +84,18 @@ class MultiplayerLoginScreen:
 
 
 class LogWindow:
-
+    """
+    Represents a window for log demonstration
+    """
     def __init__(self, master):
         self.root = master
-        self.root.geometry('500x450+700+200')
+        self.root.geometry('700x550+600+200')
         self.root.resizable(False, False)
         self.root.title('Log file')
 
         self.scrollbar = tk.Scrollbar(self.root)
         self.scrollbar.pack(side='right', fill='y')
-        self.text_box = tk.Text(self.root, width=40, height=15, font='Arial, 14')
+        self.text_box = tk.Text(self.root, width=60, height=20, font='Arial, 14')
         self.back_button = tk.Button(self.root, text='Back', width=10)
 
         self.text_box.config(yscrollcommand=self.scrollbar.set)
@@ -94,7 +106,9 @@ class LogWindow:
 
 
 class GameBoard:
-
+    """
+    Represents game board
+    """
     def __init__(self, master):
         self.root = master
         self.root.geometry('450x500+620+200')
@@ -103,12 +117,11 @@ class GameBoard:
 
         menubar = tk.Menu(self.root)
         self.control_menu = tk.Menu(self.root, tearoff=0)
-        # self.control_menu.add_command(label="Restart", font='Arial, 14')
-        # self.control_menu.add_command(label="Exit", font='Arial, 14')
         menubar.add_cascade(label="Options", font='Arial, 14', menu=self.control_menu)
 
         self.status_frame = tk.Frame(self.root, bd=1, relief='raised')
-        self.status_label = tk.Label(self.status_frame, height=4, text='Status Label', font='Arial, 14').pack()
+        self.status_label = tk.Label(self.status_frame, height=4,
+                                     text='Status Label', font='Arial, 14')
         self.board_frame = tk.Frame(self.root, bd=1, relief='raised')
         self.buttons_frame = tk.Frame(self.board_frame)
         for i in range(3):
@@ -118,24 +131,6 @@ class GameBoard:
         self.buttons_frame.pack()
 
         self.root.config(menu=menubar)
+        self.status_label.pack()
         self.board_frame.pack(side='bottom', fill='x')
         self.status_frame.pack(side='bottom', fill='x')
-
-    def button_clicked(self, button):
-        #button.config(text='X', fg='red')
-        board = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-        i = 0
-        for button in self.buttons_frame.winfo_children():
-            board[i] = button['text']
-            i += 1
-        print(board)
-        print(button['text'])
-
-    @staticmethod
-    def button_change_content(button, content):
-        button.config(text=content)
-
-
-# root = tk.Tk()
-# app = Log(root)
-# root.mainloop()
