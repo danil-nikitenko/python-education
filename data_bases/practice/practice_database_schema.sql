@@ -64,6 +64,6 @@ CREATE TABLE IF NOT EXISTS orders (
     created_at timestamp(2),
     updated_at timestamp(2),
     PRIMARY KEY (order_id),
-    PRIMARY KEY (cart_id) REFERENCES carts (cart_id),
-    PRIMARY KEY (order_status_id) REFERENCES order_status (order_status_id)
+    FOREIGN KEY (cart_id) REFERENCES carts (cart_id),
+    FOREIGN KEY (order_status_id) REFERENCES order_status (order_status_id)
 );
