@@ -26,7 +26,7 @@ SELECT * FROM products WHERE category_id IN (
     WHERE category_title IN ('Category 7', 'Category 11', 'Category 18')
     );
 -- № 5
-SELECT * FROM orders WHERE order_status_id = 2 AND updated_at::timestamp = date '2020-12-31';
+SELECT * FROM orders WHERE order_status_id IN (1, 2, 3) AND updated_at::timestamp <= date '2020-12-31';
 -- № 6
 SELECT * FROM carts WHERE cart_id IN (SELECT cart_id FROM orders WHERE order_status_id = 5);
 
