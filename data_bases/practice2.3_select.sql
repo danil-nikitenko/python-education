@@ -23,40 +23,45 @@ ORDER BY total_products DESC;
 
 --TASK 4
 -- № 1
-SELECT * FROM products WHERE product_id NOT IN (SELECT product_id FROM cart_product);
+SELECT p.product_id
+FROM products p
+    LEFT JOIN cart_product cp USING(product_id)
+WHERE cp.product_id IS NULL;
 -- № 2
-SELECT * FROM products WHERE product_id NOT IN (
-    SELECT product_id FROM cart_product WHERE cart_id IN (
-        SELECT cart_id FROM carts WHERE cart_id IN (SELECT cart_id FROM orders)
-        )
-    );
+SELECT p.product_id
+FROM products p
+    FULL JOIN cart_product cp USING (product_id)
+    LEFT JOIN orders o USING (cart_id)
+WHERE o.cart_id IS NULL
+GROUP BY p.product_id
+ORDER BY p.product_id DESC;
 -- № 3
-CREATE OR REPLACE VIEW top_ten_products_in_carts AS
-SELECT product_id, COUNT(cart_id) total FROM cart_product GROUP BY product_id ORDER BY total DESC LIMIT 10;
-
-SELECT * FROM products WHERE product_id IN (SELECT product_id FROM top_ten_products_in_carts);
+SELECT p.product_id, COUNT(cp.cart_id)
+FROM products p
+    JOIN cart_product cp USING(product_id)
+GROUP BY p.product_id ORDER BY count DESC LIMIT 10;
 -- № 4
-CREATE OR REPLACE VIEW top_ten_products_in_orders AS
-SELECT product_id, COUNT(cart_id) total FROM cart_product WHERE cart_id IN (
-    SELECT cart_id FROM carts WHERE cart_id IN (SELECT cart_id FROM orders)
-    )GROUP BY product_id ORDER BY total DESC LIMIT 10;
-
-SELECT * FROM products WHERE product_id IN ( SELECT product_id FROM top_ten_products_in_orders);
+SELECT p.product_id, COUNT(cp.cart_id)
+FROM products p
+    JOIN cart_product cp USING(product_id)
+    JOIN orders o USING(cart_id)
+GROUP BY p.product_id ORDER BY count DESC LIMIT 10;
 -- № 5
-CREATE OR REPLACE VIEW top_five_user_with_the_most_money_spent AS
-SELECT user_id, SUM(total) FROM carts WHERE cart_id IN (
-    SELECT cart_id FROM carts WHERE cart_id IN (SELECT cart_id FROM orders)
-    )GROUP BY user_id ORDER BY sum DESC LIMIT 5;
-
-SELECT * FROM users WHERE user_id IN (SELECT user_id FROM top_five_user_with_most_money_spent);
+SELECT u.user_id, SUM(c.total)
+FROM users u
+    JOIN carts c USING(user_id)
+    JOIN orders o USING(cart_id)
+GROUP BY u.user_id ORDER BY sum DESC LIMIT 5;
 -- № 6
-CREATE OR REPLACE VIEW top_five_user_with_the_largest_number_of_orders AS
-SELECT user_id, COUNT(cart_id) FROM carts WHERE cart_id IN (
-    SELECT cart_id FROM carts WHERE cart_id IN (SELECT cart_id FROM orders)
-    ) GROUP BY user_id ORDER BY count DESC LIMIT 5;
-
-SELECT * FROM users WHERE user_id IN (SELECT user_id FROM top_five_user_with_the_largest_number_of_orders);
+SELECT u.user_id, COUNT(c.cart_id)
+FROM users u
+    JOIN carts c USING(user_id)
+    JOIN orders o USING(cart_id)
+GROUP BY u.user_id ORDER BY count DESC LIMIT 5;
 -- № 7
-SELECT * FROM users WHERE user_id NOT IN (
-    SELECT user_id FROM carts WHERE cart_id IN (SELECT cart_id FROM orders)
-    ) ORDER BY user_id LIMIT 5;
+SELECT u.user_id
+FROM users u
+    INNER JOIN carts c USING(user_id)
+    LEFT JOIN orders o USING(cart_id)
+WHERE o.cart_id IS NULL
+ORDER BY u.user_id DESC LIMIT 5;
