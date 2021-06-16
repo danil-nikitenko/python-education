@@ -1,0 +1,61 @@
+CREATE OR REPLACE VIEW most_expensive_products_category_5
+AS SELECT
+          product_id AS id,
+          product_title AS title,
+          product_description AS description,
+          in_stock AS "in stock",
+          price,
+          slug
+FROM products WHERE category_id = 5
+ORDER BY price DESC LIMIT 10;
+
+SELECT * FROM most_expensive_products_category_5;
+DROP VIEW most_expensive_products_category_5;
+
+CREATE OR REPLACE VIEW orders_by_statuses
+AS SELECT
+          o.order_id AS id,
+          o.cart_id AS "cart id",
+          os.status_name AS status,
+          o.shipping_total AS shipping,
+          o.total AS total,
+          o.created_at AS "created at",
+          o.updated_at AS "updated at"
+FROM orders o
+INNER JOIN order_status os USING(order_status_id)
+ORDER BY o.order_status_id, o,order_id;
+
+SELECT * FROM orders_by_statuses;
+DROP VIEW orders_by_statuses;
+
+CREATE OR REPLACE VIEW products_by_categories
+AS SELECT
+          p.product_id AS id,
+          p.product_title AS title,
+          p.product_description AS description,
+          p.in_stock AS "in stock",
+          p.price,
+          p.slug,
+          c.category_title AS category,
+          c.category_description AS "category description"
+FROM products p
+INNER JOIN categories c USING(category_id)
+ORDER BY p.category_id, p.product_id;
+
+SELECT * FROM products_by_categories;
+DROP VIEW products_by_categories;
+
+CREATE MATERIALIZED VIEW products_sold
+AS SELECT
+          c.category_title AS category,
+          COUNT(cp.product_id) AS "total sold",
+          ROUND(SUM(p.price)::numeric, 2) AS "total cost"
+FROM categories c
+INNER JOIN products p USING(category_id)
+INNER JOIN cart_product cp USING(product_id)
+INNER JOIN orders USING(cart_id)
+GROUP BY c.category_id
+ORDER BY c.category_id;
+
+SELECT * FROM products_sold;
+DROP MATERIALIZED VIEW products_sold;
