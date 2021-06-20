@@ -21,15 +21,16 @@ drop function set_shipping_total_on_zero(user_city text);
 select * from orders where shipping_total = 0;
 
 -- № 2
-create or replace procedure create_cart(u_id int, variadic prods int[])
+create or replace procedure create_cart(u_id int, prods int[])
 language plpgsql
 as $$
 declare
     i int;
-    buffer numeric;
     new_cart_id int := 0;
     total_price numeric := 0;
+    query text := 'insert into cart_product(cart_id, product_id) values';
 begin
+    -- create cart
     select cart_id + 1 from carts order by cart_id desc limit 1 into new_cart_id;
 
     if exists(select user_id from users where user_id = u_id) then
@@ -39,21 +40,25 @@ begin
         raise 'User with id % not found', u_id;
     end if;
 
-    for i in array_lower(prods, 1) .. array_upper(prods, 1)
+    -- change cart price
+    if exists(select product_id from products where product_id = any(prods)) then
+        select sum(price) from products where product_id = any(prods) into total_price;
+        update carts set subtotal = total_price, total = total_price where cart_id = new_cart_id;
+    else
+        raise 'Wrong products list';
+    end if;
+
+    -- insert products into cart_product table
+	foreach i in array prods
         loop
-            if exists(select product_id from products where product_id = prods[i]) then
-                select price from products where product_id = prods[i] into buffer;
-            else
-                raise 'Product with id % not found', prods[i];
-            end if;
-            insert into cart_product(cart_id, product_id) values(new_cart_id, prods[i]);
-            total_price := total_price + buffer;
+            query = query || (new_cart_id, prods[i]) || ',';
         end loop;
 
-    update carts set subtotal = total_price, total = total_price where cart_id = new_cart_id;
+    execute substring(query, 0, char_length(query));
+
 end;$$;
 
-call create_cart(50, 1, 2, 3);
+call create_cart(50, array[1, 2, 3]);
 drop procedure create_cart(u_id int, prods int[]);
 
 create or replace procedure change_email(u_id int, new_email text)
