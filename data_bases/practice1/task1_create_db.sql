@@ -37,6 +37,7 @@ create table if not exists rented (
     car_id int not null,
     rental_date timestamp(2) not null,
     rental_period_days int not null,
+    to_pay money,
     foreign key(customer_id) references customer(customer_id),
     foreign key(car_id) references car(car_id)
 );
@@ -93,3 +94,6 @@ select
     timestamp '2020-01-01 22:00:00' + random() * (timestamp '2021-12-31 22:00:00' - timestamp '2020-01-01 08:00:00'),
     (floor(random() * (30-1+1) + 1))::int
 from generate_series(1, 29500) s(i);
+
+update rented r set to_pay = (select day_rental_price from car c where c.car_id = r.car_id) * r.rental_period_days
+where car_id between 1 and 29500;
