@@ -1,0 +1,141 @@
+-- № 1
+create or replace function set_shipping_total_on_zero(user_city text)
+returns void
+language plpgsql
+as $$
+        begin
+        update orders set shipping_total = 0
+        where cart_id in (
+            select cart_id from carts
+            inner join users u using(user_id)
+            where u.city = user_city
+            );
+        if not found then
+            raise 'No orders in %', user_city;
+        end if;
+        end;
+    $$;
+
+select set_shipping_total_on_zero('city 11');
+drop function set_shipping_total_on_zero(user_city text);
+select * from orders where shipping_total = 0;
+
+-- № 2
+create or replace procedure create_cart(u_id int, prods int[])
+language plpgsql
+as $$
+declare
+    i int;
+    new_cart_id int := 0;
+    total_price numeric := 0;
+    query text := 'insert into cart_product(cart_id, product_id) values';
+begin
+    -- create cart
+    select cart_id + 1 from carts order by cart_id desc limit 1 into new_cart_id;
+
+    if exists(select user_id from users where user_id = u_id) then
+        insert into carts (cart_id, user_id, subtotal, total, timestamp)
+        values (new_cart_id, u_id, 0, 0, now());
+    else
+        raise 'User with id % not found', u_id;
+    end if;
+
+    -- change cart price
+    if exists(select product_id from products where product_id = any(prods)) then
+        select sum(price) from products where product_id = any(prods) into total_price;
+        update carts set subtotal = total_price, total = total_price where cart_id = new_cart_id;
+    else
+        raise 'Wrong products list';
+    end if;
+
+    -- insert products into cart_product table
+	foreach i in array prods
+        loop
+            query = query || (new_cart_id, prods[i]) || ',';
+        end loop;
+
+    execute substring(query, 0, char_length(query));
+
+end;$$;
+
+call create_cart(50, array[1, 2, 3]);
+drop procedure create_cart(u_id int, prods int[]);
+
+create or replace procedure change_email(u_id int, new_email text)
+language plpgsql
+as
+$$
+begin
+    update users set email = new_email where user_id = u_id;
+    if (select count(email) from users where email = new_email) > 1 then
+        rollback;
+    else
+        commit;
+    end if;
+end;$$;
+
+call change_email(3, 'some_new_email@gmail.com');
+drop procedure change_email(u_id int, new_email text);
+
+-- № 3
+select c.category_title, p.product_title, p.price, round(avg(price) over (partition by c.category_title)::numeric, 2) as avg
+from products p
+join categories c using(category_id);
+
+-- № 4
+create or replace function order_updater()
+returns trigger
+language plpgsql
+as
+$$
+begin
+    update orders set updated_at = now() where order_id = new.order_id;
+    return new;
+end;
+$$;
+
+create trigger order_after_update
+    after update of order_id, cart_id, order_status_id, shipping_total, total, created_at
+    on orders
+    for each row
+    execute procedure order_updater();
+
+update orders set shipping_total = 50 where order_id in (1, 2, 10);
+drop trigger order_after_update on orders;
+drop function order_updater();
+
+create or replace function update_cart_cost()
+returns trigger
+language plpgsql
+as
+$$
+declare
+    new_cost numeric;
+begin
+    if (tg_op = 'INSERT') then
+        select sum(price)
+        from products
+        join cart_product using(product_id)
+        where cart_id = new.cart_id into new_cost;
+        update carts set subtotal = new_cost, total = new_cost where cart_id = new.cart_id;
+        return new;
+    else
+        select sum(price)
+        from products
+        join cart_product using(product_id)
+        where cart_id = old.cart_id into new_cost;
+        update carts set subtotal = new_cost, total = new_cost where cart_id = old.cart_id;
+        return old;
+    end if;
+end;
+$$;
+
+create trigger cart_product_after_insert_or_delete
+    after insert or delete
+    on cart_product
+    for each row
+    execute procedure update_cart_cost();
+
+insert into cart_product (cart_id, product_id) values (1, 1);
+drop trigger cart_product_after_insert_or_delete on cart_product;
+drop function update_cart_cost();
