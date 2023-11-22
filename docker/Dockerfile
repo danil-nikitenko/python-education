@@ -1,4 +1,4 @@
-FROM python:3.8.5
+FROM python:3.10.13
 
 RUN mkdir -p /usr/src/current_time/
 
